@@ -157,6 +157,8 @@ feature_summary(WHAT ALL)
 
 add_library(opus ${opus_sources} ${opus_sources_float})
 
+add_library(Opus::opus ALIAS opus)
+
 set(Opus_PUBLIC_HEADER
     ${CMAKE_CURRENT_SOURCE_DIR}/include/opus.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/opus_custom.h
@@ -303,6 +305,11 @@ if(COMPILER_SUPPORT_NEON AND OPUS_USE_NEON)
                                OPUS_ARM_PRESUME_NEON_INTR)
   endif()
 endif()
+
+target_compile_definitions(opus
+                           PRIVATE
+                           $<$<BOOL:${HAVE_LRINT}>:HAVE_LRINT>
+                           $<$<BOOL:${HAVE_LRINTF}>:HAVE_LRINTF>)
 
 install(TARGETS opus
         EXPORT OpusTargets
