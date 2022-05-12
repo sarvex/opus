@@ -44,8 +44,8 @@ endfunction()
 
 function(get_package_version PACKAGE_VERSION)
   find_package(Git)
-  if(GIT_FOUND)
-    execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --match "v*"
+  if(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/.git")
+    execute_process(COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_CURRENT_LIST_DIR}/.git describe --tags --match "v*"
                     OUTPUT_VARIABLE OPUS_PACKAGE_VERSION)
     if(OPUS_PACKAGE_VERSION)
       string(STRIP ${OPUS_PACKAGE_VERSION}, OPUS_PACKAGE_VERSION)
@@ -67,7 +67,7 @@ function(get_package_version PACKAGE_VERSION)
     endif()
   endif()
 
-  if(EXISTS "${CMAKE_SOURCE_DIR}/package_version")
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/package_version")
     # Not a git repo, lets' try to parse it from package_version file if exists
     file(STRINGS package_version opus_package_version_string
          LIMIT_COUNT 1
